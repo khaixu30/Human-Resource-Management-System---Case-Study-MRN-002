@@ -57,4 +57,6 @@ const authIdentitySchema = new mongoose.Schema({    // It is same as common user
     timestamps: true // Automatically manages createdAt and updatedAt fields
 });
 
-export default authIdentitySchema;  // Exports the authIdentitySchema for use in other files. 
+const AuthIdentity = mongoose.model('AuthIdentity', authIdentitySchema);
+
+export default authIdentity;  // Exports the authIdentitySchema for use in other files. 
