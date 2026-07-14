@@ -1,10 +1,42 @@
 import { useState } from 'react';
 import Logo from '../../assets/logo.png'
 import './forms.css'
-import { RiEyeLine, RiEyeOffLine } from '@remixicon/react';
+import { RiCloseLine, RiEyeLine, RiEyeOffLine } from '@remixicon/react';
+import { useNavigate } from 'react-router';
+import api from '../../api/api.js';
+
+// MessageBox Component
+const MessageBox = ({ errorState, setErrorState }) => {
+    if (!errorState || !errorState.errorMessage) return null;
+    
+
+    const handleClose = () => {
+        setErrorState({ errorCode: null, errorMessage: null });
+    };
+
+    return (
+        <div className="message-container">
+            <div className={`${!errorState.isSuccess ? 'error' : 'success'} show  `}>
+                <p className="message-text"> 
+                    {errorState.errorMessage}
+                </p>
+                
+                <button type="button" onClick={handleClose} className="popup-btn">
+                    <RiCloseLine />
+                </button>
+            </div>
+        </div>
+    );
+};
 
 function Login() {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [errorData, setErrorData] = useState({
+        errorCode: null,
+        errorMessage: null,
+        isSuccess: false
+    });
 
     const [formData, setFormData] = useState({
         email: '',
@@ -22,15 +54,43 @@ function Login() {
         return "Unknown";
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-        const payload = {
-            device: getDevice(),
-            date: new Date().toISOString(),
-            userAgent: navigator.userAgent
+        const request = {
+            email: formData.email,
+            password: formData.password,
+            payload: {
+                device: getDevice(),
+                date: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            }
         }
-        console.log(payload);
+
+        try{
+            console.log('idhr hai abhi')
+            const response = await api.post('/login', request);
+
+            console.log('api call hogai')
+
+            setErrorData({
+                errorCode: response.data.errorCode, 
+                errorMessage: response.data.message ,
+                isSuccess: response.status === 200 || response.status === 201
+            });
+
+            
+            setFormData({ email: '', password: ''});
+            navigate('/', {replace: true})
+        }catch(error){
+            console.log(error);
+            const serverCode = error.response?.data?.errorCode || "LOGIN_FAILED";
+            const serverMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+
+            setErrorData({
+                errorCode: serverCode,
+                errorMessage: serverMessage
+            });
+        }
     }
 
     const handleChange = (e) => {
@@ -61,6 +121,7 @@ function Login() {
                             <h1>Login</h1>
                         </div>
                         <div className="form-body">
+                            <MessageBox errorState={errorData} setErrorState={setErrorData} />
                             <div className="field-container">
                                 <label htmlFor="Email">Email: </label>
                                 <input

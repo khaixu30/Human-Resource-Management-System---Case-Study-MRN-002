@@ -33,7 +33,8 @@ const authIdentitySchema = new mongoose.Schema({    // It is same as common user
             values: ['SuperAdmin', 'HRAdmin', 'Manager', 'Employee', 'Recruiter'],
             message: '{VALUE} is not a valid role'
         },
-        required: [true, 'User role is required']
+        required: [true, 'User role is required'],
+        default: 'Employee'
     },
     employeeId: {       // It will work as a foreign key
         type: mongoose.Schema.Types.ObjectId,      // DATATYPE will be the ObjectId default type for storing ids in mongodb
@@ -57,6 +58,6 @@ const authIdentitySchema = new mongoose.Schema({    // It is same as common user
     timestamps: true // Automatically manages createdAt and updatedAt fields
 });
 
-const AuthIdentity = mongoose.model('AuthIdentity', authIdentitySchema);
+const authIdentity = mongoose.model('AuthIdentity', authIdentitySchema);
 
 export default authIdentity;  // Exports the authIdentitySchema for use in other files. 
