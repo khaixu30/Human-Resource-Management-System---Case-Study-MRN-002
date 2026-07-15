@@ -30,11 +30,11 @@ const authIdentitySchema = new mongoose.Schema({    // It is same as common user
     role: {
         type: String,
         enum: {
-            values: ['SuperAdmin', 'HRAdmin', 'Manager', 'Employee', 'Recruiter'],
+            values: ['SuperAdmin', 'HRAdmin', 'Manager', 'Employee', 'Recruiter', 'Candidate'],
             message: '{VALUE} is not a valid role'
         },
         required: [true, 'User role is required'],
-        default: 'Employee'
+        default: 'Candidate'
     },
     employeeId: {       // It will work as a foreign key
         type: mongoose.Schema.Types.ObjectId,      // DATATYPE will be the ObjectId default type for storing ids in mongodb

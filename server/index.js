@@ -2,8 +2,15 @@ import e from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import {rateLimit} from 'express-rate-limit';
+import helmet from 'helmet';
 
+// DB Path
 import connectDB from "./db/connect.db.js";
+
+// Middleware Imports
+import {requestLogger} from './middleware/requestLogger.middleware.js';
+
+// Route Imports
 import authRouter from "./routes/auth.routes.js";
 
 
@@ -28,7 +35,10 @@ app.use(e.urlencoded());
 
 connectDB();
 
-app.use(limiter)
+app.use(helmet());
+app.use(limiter);
+app.use(requestLogger);
+
 app.use('/api', authRouter);
 
 app.get('/', (req, res) => {
