@@ -10,7 +10,7 @@ const departmentSchema = new mongoose.Schema({
 
     managerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Employee",
+        ref: "AuthIdentity",
         default: null
     }
 }, {

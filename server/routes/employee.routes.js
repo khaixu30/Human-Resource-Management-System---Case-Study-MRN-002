@@ -3,10 +3,11 @@ import Employee from '../models/employee.model.js';
 import { authenticate, authorize } from '../middleware/auth.middleware.js';
 import authIdentity from '../models/authIdentity.model.js';
 import { generateEmployeeId } from '../utils/genUserId.util.js';
+import { sendNewEmployeeRecord } from '../api/mail.api.js';
 
 const employeeRouter = Router();
 
-employeeRouter.post('/employee', authenticate, authorize(['HRAdmin', 'SuperAdmin']), async (req, res) => {
+employeeRouter.post('/employee/create', authenticate, authorize(['HRAdmin', 'SuperAdmin']), async (req, res) => {
     try{
         const { 
             firstName, 
@@ -55,9 +56,8 @@ employeeRouter.post('/employee', authenticate, authorize(['HRAdmin', 'SuperAdmin
             employeeId: newEmployee._id
         });
 
-        console.log(newEmployee, user);
-
-        console.log(employeeId);
+        await sendNewEmployeeRecord(newEmployee, user.email);
+        
         res.status(200).json({
             success: true,
             code: "SUCCESS",

@@ -13,7 +13,8 @@ import {requestLogger} from './middleware/requestLogger.middleware.js';
 // Route Imports
 import authRouter from "./routes/auth.routes.js";
 import employeeRouter from "./routes/employee.routes.js";
-
+import departmentRouter from './routes/department.routes.js';
+import designationRouter from './routes/designation.routes.js';
 
 dotenv.config()
 
@@ -42,6 +43,8 @@ app.use(requestLogger);
 
 app.use('/api', authRouter);
 app.use('/api', employeeRouter);
+app.use('/api', departmentRouter);
+app.use('/api', designationRouter);
 
 app.get('/', (req, res) => {
     res.status(200).json({message: "Hello World!"});

@@ -8,7 +8,7 @@ import { verifyAuthIdentityForOTP } from '../middleware/auth.middleware.js';
 
 const authRouter = Router();
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/auth/register', async (req, res) => {
     try {
         const { email, password, payload } = req.body;
 
@@ -56,7 +56,7 @@ authRouter.post('/register', async (req, res) => {
         
         const token = jwt.sign(token_payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRESIN})
         
-        await sendOTP(otp);
+        await sendOTP(otp, newUser.email);
         
         res.status(201).json({
             success: true,
@@ -77,7 +77,7 @@ authRouter.post('/register', async (req, res) => {
     }
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/auth/login', async (req, res) => {
     try{
         const {email, password, payload} = req.body;
 
@@ -132,7 +132,7 @@ authRouter.post('/login', async (req, res) => {
 
         const token =  jwt.sign(token_payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRESIN});
 
-        await sendOTP(otp);
+        await sendOTP(otp, user.email);
 
         res.status(200).json({
             success: true,
@@ -153,11 +153,11 @@ authRouter.post('/login', async (req, res) => {
 });
 
 
-authRouter.post('/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
+authRouter.post('/auth/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
     try {
 
         const { otp: userInputOtp } = req.body;
-        const { id, email, payload, dbOtp } = req.user; 
+        const { id, email, payload, dbOtp, role } = req.user; 
 
         if (String(userInputOtp) !== String(dbOtp)) {
             console.log("OTP Mismatched");
@@ -172,7 +172,8 @@ authRouter.post('/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
             email,
             id, 
             payload,
-            status: 'verified'
+            status: 'verified',
+            role
         };
         
         const token = jwt.sign(token_payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRESIN || '1d' });
