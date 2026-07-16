@@ -17,7 +17,7 @@ authRouter.post('/register', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Email already in use",
-                errorCode: "EMAIL_EXISTS"
+                code: "EMAIL_EXISTS"
             });
         }
 
@@ -50,26 +50,27 @@ authRouter.post('/register', async (req, res) => {
             userID: newUser._id,
             email: newUser.email,
             status: 'unverified',
-            payload
+            payload,
+            role: newUser.role
         }
-
+        
         const token = jwt.sign(token_payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRESIN})
-
+        
         await sendOTP(otp);
-
+        
         res.status(201).json({
             success: true,
             message: "User Created Successfully, Please Verify your account!",
-            errorCode: "OTP_SENT",
+            code: "OTP_SENT",
             data: newUser,
             token
         })
 
-
+        
     } catch (err) {
         console.log(err)
         res.status(500).json({
-            errorCode: "SERVER_FAULT",
+            code: "SERVER_FAULT",
             success: false,
             message: "Internal Server Error"
         })
@@ -107,16 +108,16 @@ authRouter.post('/login', async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: "User does not exists",
-                errorCode: "USER_NOT_FOUND"
+                code: "USER_NOT_FOUND"
             });
         }
-        console.log(user);
+
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if(!isMatch){
             return res.status(400).json({
                 success: false, 
                 message: "Incorrect email or password",
-                errorCode: "INVALID_PASSWORD"
+                code: "INVALID_PASSWORD"
             });
         }
 
@@ -125,7 +126,8 @@ authRouter.post('/login', async (req, res) => {
             email: user.email,
             id: user._id,
             status: 'unverified',
-            payload
+            payload,
+            role: user.role
         }
 
         const token =  jwt.sign(token_payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRESIN});
@@ -135,7 +137,7 @@ authRouter.post('/login', async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Login Successful, Please Verify Via OTP",
-            errorCode: "OTP_SENT",
+            code: "OTP_SENT",
             data: user,
             token
         });
@@ -145,7 +147,7 @@ authRouter.post('/login', async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Internal Server Error",
-            errorCode: "SERVER_FAULT"
+            code: "SERVER_FAULT"
         })
     }
 });
@@ -162,7 +164,7 @@ authRouter.post('/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Invalid OTP",
-                errorCode: "INVALID_OTP"
+                code: "INVALID_OTP"
             });
         }
 
@@ -178,7 +180,7 @@ authRouter.post('/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "OTP verification completed!",
-            errorCode: "OTP_VERIFIED",
+            code: "OTP_VERIFIED",
             token
         });
     } catch (err) {
@@ -186,7 +188,7 @@ authRouter.post('/verify-otp', verifyAuthIdentityForOTP, async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
-            errorCode: "SERVER_FAULT"
+            code: "SERVER_FAULT"
         });
     }
 });

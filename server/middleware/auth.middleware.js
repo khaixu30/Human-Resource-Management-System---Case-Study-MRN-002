@@ -3,57 +3,57 @@ import authIdentity from '../models/authIdentity.model.js';
 import AppError from './appError.middleware.js';
 
 export const verifyAuthIdentityForOTP = async (req, res, next) => {
-    try{
-        const authHeader = req.headers.authorization;
+  try {
+    const authHeader = req.headers.authorization;
 
-        if(!authHeader){
-            return res.status(400).json({
-                success: false, 
-                message: "Plase login first!",
-                errorCode: "LOGIN_REQUIRED"
-            });
-        }
-
-        const token = authHeader.split(' ')[1]
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const foundUser = await authIdentity.findById(decoded.id);
-        const otpData = foundUser.otp;
-
-        const now = new Date();
-        if(now.getTime() < otpData.expiresIn){
-            return res.status(400).json({
-                success: false,
-                message: "OTP has expired, try loggin in again!",
-                errorCode: "OTP_EXPIRED"
-            });
-        }
-
-        req.user = { 
-            id: decoded.id, 
-            email: decoded.email, 
-            payload: decoded.payload || {},
-            dbOtp: otpData.otp
-        };
-        next();
-    }catch(err){
-        console.log("Middleware Error:", err);
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid or session-expired token. Please login again.",
-                errorCode: "INVALID_TOKEN"
-            });
-        }
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error, (midware)",
-            errorCode: "SERVER_FAULT"
-        });
+    if (!authHeader) {
+      return res.status(400).json({
+        success: false,
+        message: "Plase login first!",
+        code: "LOGIN_REQUIRED"
+      });
     }
+
+    const token = authHeader.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const foundUser = await authIdentity.findById(decoded.id);
+    const otpData = foundUser.otp;
+
+    const now = new Date();
+    if (now.getTime() > otpData.expiresIn) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired, try loggin in again!",
+        code: "OTP_EXPIRED"
+      });
+    }
+
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      payload: decoded.payload || {},
+      dbOtp: otpData.otp,
+      role: decoded.role
+    };
+    next();
+  } catch (err) {
+    console.log("Middleware Error:", err);
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or session-expired token. Please login again.",
+        code: "INVALID_TOKEN"
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error, (midware)",
+      code: "SERVER_FAULT"
+    });
+  }
 }
 
 // middlewares/authenticate.js
-// npm i jsonwebtoken
 // Applied to all protected routes. Verifies the access JWT and attaches req.user.
 // Never trusts a client-supplied user id — req.user is derived only from the
 // verified token payload (per B.5 design notes).
@@ -69,15 +69,25 @@ export function authenticate(req, res, next) {
     return next(new AppError(401, 'UNAUTHENTICATED', 'Access token is required'));
   }
 
-  const token = header.split(' ')[1];
+  // const token = header.split(' ')[1];
+
+  const token = header.slice(7).trim();
+  if (!token) {
+    return next(new AppError(401, 'UNAUTHENTICATED', 'Access token is required'));
+  }
+
+  console.log(token);
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    console.log('authenticate pr aagaya hai')
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('authenticate pass hogaya hai')
 
     req.user = {
-      id: payload.sub,
-      role: payload.role,
-      employeeId: payload.employeeId || null,
+      id: payload.id,
+      email: payload.email,
+      status: payload.status,
+      role: payload.role
     };
 
     return next();
@@ -96,13 +106,16 @@ export function authenticate(req, res, next) {
 // Usage: authorize('SuperAdmin', 'HRAdmin')
 
 
-export function authorize(...allowedRoles) {
+export function authorize(allowedRoles) {
+  const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   return function (req, res, next) {
     if (!req.user) {
       return next(new AppError(401, 'UNAUTHENTICATED', 'Access token is required'));
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    console.log(roles);
+    console.log(req.user);
+    if (!roles.includes(req.user.role)) {
       return next(new AppError(403, 'FORBIDDEN', 'You do not have permission to perform this action'));
     }
 

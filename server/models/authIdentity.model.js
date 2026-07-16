@@ -41,10 +41,6 @@ const authIdentitySchema = new mongoose.Schema({    // It is same as common user
         ref: 'Employee', // Points to your Employees collection
         default: null // Nullable if the user is not onboarded as an employee yet
     },
-    isMfaEnabled: {
-        type: Boolean,
-        default: false
-    },
     devices: [deviceSchema], // Array of embedded device subdocuments
     status: {   // It only accepts the values that are present in enum.
         type: String,
