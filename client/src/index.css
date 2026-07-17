@@ -34,7 +34,7 @@
   --warning: #f59f0b1f;
   --warning-border: #F59E0B;
   --danger-border: #EF4444;
-  --danger: #ef444499;
+  --danger: #ef44446e;
   --info: #0EA5E9;
 
   /* Hover */
@@ -43,92 +43,45 @@
 
 body{
   background: var(--background);
-  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-secondary);
   font-size: 16px;
-  width: 100%;
-  min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6{
   font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-}
-
-p{
-  font-size: 16px;
-  font-family: 'inter', sans-serif;
-  font-weight: 400;
+  color: var(--text-primary);
 }
 
 button{
   width: 100%;
   padding: 8px;
   font-size: 16px;
-  background: var(--primary-color);
-  border-radius: 8px;
-  outline: none;
-  border: 2px solid var(--primary-light);
   color: var(--text-light);
+  background: var(--primary-color);
+  border: none;
+  outline: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 button:hover{
-  background: transparent;
-  color: var(--text-primary);
-  border: 2px solid var(--primary-dark);
+  background: var(--primary-light);
 }
 
 a{
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
 }
 
 a:hover{
-  color: var(--hover);
+    color: var(--primary-light);
 }
 
-form .message-container{
-  width: 100%;
-  position: relative;
+button:disabled{
+  background: var(--primary-light);
+  cursor: not-allowed;
+  user-select: none;
 }
-
-.message-container .error{
-  padding: 8px;
-  border: 2px solid var(--danger-border);
-  margin: 8px 0;
-  border-radius: 8px;
-  background: var(--danger);
-  display: none;
-}
-
-.show{
-  display: block !important;
-}
-
-.popup-btn{
-  width: fit-content;
-  padding: 0;
-  color: var(--text-primary);
-  background: transparent;
-  border: none;
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-}
-
-.popup-btn:hover{
-  border: none;
-  color: var(--text-secondary);
-}
-
-.message-container .success{
-  background: var(--success);
-  border: 2px solid var(--success-border);
-  padding: 8px;
-  border-radius: 8px;
-  margin: 8px 0;
-}
-

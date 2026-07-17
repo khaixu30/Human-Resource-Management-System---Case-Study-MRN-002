@@ -1,10 +1,8 @@
-import Register from "../components/forms/Register";
+import Register from '../components/forms/Register';
 
-function RegisterView (){
+function RegisterView () {
     return (
-        <>
-            <Register />
-        </>
+        <Register />
     )
 }
 

@@ -1,10 +1,8 @@
 import Login from "../components/forms/Login";
 
-function LoginView (){
+function LoginView () {
     return (
-        <>
-            <Login />
-        </>
+        <Login />
     )
 }
 
