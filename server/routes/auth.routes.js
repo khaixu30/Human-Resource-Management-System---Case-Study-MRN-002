@@ -4,7 +4,7 @@ import authIdentity from '../models/authIdentity.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {sendOTP} from '../api/mail.api.js';
-import { verifyAuthIdentityForOTP } from '../middleware/auth.middleware.js';
+import { verifyAuthIdentityForOTP, authenticate } from '../middleware/auth.middleware.js';
 
 const authRouter = Router();
 
@@ -187,6 +187,34 @@ authRouter.post('/auth/verify-otp', verifyAuthIdentityForOTP, async (req, res) =
     } catch (err) {
         console.log("Router Error:", err);
         return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            code: "SERVER_FAULT"
+        });
+    }
+});
+
+authRouter.get('/auth/me', authenticate, async (req, res) => {
+    try {
+        const user = await authIdentity.findById(req.user.id).select('-passwordHash');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+                code: "NOT_FOUND"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User fetched",
+            code: "SUCCESS",
+            data: user
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
             success: false,
             message: "Internal Server Error",
             code: "SERVER_FAULT"

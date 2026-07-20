@@ -15,6 +15,7 @@ import authRouter from "./routes/auth.routes.js";
 import employeeRouter from "./routes/employee.routes.js";
 import departmentRouter from './routes/department.routes.js';
 import designationRouter from './routes/designation.routes.js';
+import jobRouter from "./routes/job.routes.js";
 
 dotenv.config()
 
@@ -38,13 +39,17 @@ app.use(e.urlencoded());
 connectDB();
 
 app.use(helmet());
-app.use(limiter);
+
+// Limiter Off for the development!
+
+// app.use(limiter);
 app.use(requestLogger);
 
 app.use('/api', authRouter);
 app.use('/api', employeeRouter);
 app.use('/api', departmentRouter);
 app.use('/api', designationRouter);
+app.use('/api', jobRouter);
 
 app.get('/', (req, res) => {
     res.status(200).json({message: "Hello World!"});

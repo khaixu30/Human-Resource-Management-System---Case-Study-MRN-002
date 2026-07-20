@@ -1,13 +1,15 @@
 import mongoose from 'mongoose';
 
-const jobSchema = new mongooseSchema({
+const jobSchema = new mongoose.Schema({
     designationId:{
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Designation'
     },
     departmentId: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Department'
     },
     description: {
         type: String,

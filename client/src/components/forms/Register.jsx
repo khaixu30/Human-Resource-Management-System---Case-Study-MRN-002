@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import './forms.css';
+import '../../assets/css/forms.css';
+import Logo from '../../assets/logo.png';
+import Hero from '../../assets/images/hero-image.png';
+import GridBG from '../../assets/images/grid-bg.png';
 import api from '../../api/api.js';
 import { getOperatingSystem } from '../../utils/getDevice.util.js';
 import { useNavigate } from 'react-router';
-import { RiCloseLine } from '@remixicon/react';
+import { RiCloseLine, RiEyeLine, RiLockLine, RiMailLine } from '@remixicon/react';
 
 function Register() {
     const navigate = useNavigate();
@@ -30,9 +33,9 @@ function Register() {
 
         // Evaluate core security criteria
         if (pass.length >= 8) score++;
-        if (/[A-Z]/.test(pass)) score++; 
-        if (/[0-9]/.test(pass)) score++; 
-        if (/[^A-Za-z0-9]/.test(pass)) score++; 
+        if (/[A-Z]/.test(pass)) score++;
+        if (/[0-9]/.test(pass)) score++;
+        if (/[^A-Za-z0-9]/.test(pass)) score++;
 
         // Map directly to dynamic string css keys
         if (score <= 1) {
@@ -72,15 +75,15 @@ function Register() {
         e.preventDefault();
         changeLoadingState();
         try {
-            if(!formData.email){
+            if (!formData.email) {
                 createError("Please enter your email", "EMPTY_FIELD", false);
                 return;
             }
-            if(!formData.password){
+            if (!formData.password) {
                 createError("Please enter your password", "EMPTY_FIELD", false);
                 return;
             }
-            if(!formData.conPassword){
+            if (!formData.conPassword) {
                 createError("Please confirm your password", "EMPTY_FIELD", false);
                 return;
             }
@@ -126,46 +129,61 @@ function Register() {
         <>
             <div className="form-page-container">
                 <div className="left">
-                    <h1>EZITech</h1>
-                    <p>Keep Growing</p>
+                    <img src={Hero} alt="" />
                 </div>
                 <div className="right">
+                    <div className="logo-container">
+                        <img src={Logo} alt="" />
+                        <div className="logo-heading-tagline">
+                            <h1 className='logo-heading'>EZITech <br /> Institute</h1>
+                            <p>Keep Growing</p>
+                        </div>
+                    </div>
                     <form onSubmit={handleRegister} className="form-container">
-                        <h2>Welcome To EZITech</h2>
+                        <div className="heading-container">
+                            <h2>Welcome!</h2>
+                            <p>Setup your account to be the part of our journey.</p>
+                        </div>
                         <div className="form-body">
                             <div className={`error-container ${showPopup ? '' : 'hidden'}`}>
                                 <div className={`pop-up ${error.success ? 'success' : 'error'}`}>{error.errorMessage}</div>
-                                <button type='button' onClick={togglePopup}><RiCloseLine /></button>
+                                <button type='button' className='show-hide-btn' onClick={togglePopup}><RiCloseLine /></button>
                             </div>
                             <div className="field-container">
-                                <label htmlFor="email">Email: </label>
+                                <span className="icon-container"><RiMailLine size={20} /></span>
                                 <input type="email" name='email' id='email' className='email-inp' placeholder='Enter your email' value={formData.email} onChange={handleFormDataChange} />
                             </div>
-                            <div className="field-container">
-                                <label htmlFor="password">Password: </label>
-                                {/* Added dynamic strength class injection here */}
-                                <input 
-                                    type="password" 
-                                    name='password' 
-                                    id='password' 
-                                    className={`pass-inp ${strength.class}`} 
-                                    placeholder='Enter your password' 
-                                    value={formData.password} 
-                                    onChange={handleFormDataChange} 
+                            <div className={`field-container ${strength.class}`}>
+                                <span className="icon-container"><RiLockLine size={20} /></span>
+                                <input
+                                    type="password"
+                                    name='password'
+                                    id='password'
+                                    className={`pass-inp `}
+                                    placeholder='Enter your password'
+                                    value={formData.password}
+                                    onChange={handleFormDataChange}
                                 />
+                                <span className="icon-container">
+                                    <button className="show-hide-btn">
+                                    <RiEyeLine size={20} />
+                                    </button>
+                                </span>
                             </div>
                             <div className="field-container">
-                                <label htmlFor="conPassword">Confirm Password: </label>
+                                <span className="icon-container"><RiLockLine size={20} /></span>
                                 <input type="password" name='conPassword' id='conPassword' className='pass-inp' placeholder='Confirm your password' value={formData.conPassword} onChange={handleFormDataChange} />
                             </div>
                             <div className="cta-container">
-                                <span>Already have an account? <a href="/login">Login Here</a></span>
+                                <span><a href="/login">Login Account</a></span>
+                                <span><a href="/reset-password">Reset Password</a></span>
                             </div>
-                            <div className="field-container">
+                            <div className="button-container">
                                 <button disabled={isLoading}>{isLoading ? 'Registering...' : 'Register'}</button>
                             </div>
                         </div>
                     </form>
+                    <img className='grid-bg' src={GridBG} alt="" />
                 </div>
             </div>
         </>

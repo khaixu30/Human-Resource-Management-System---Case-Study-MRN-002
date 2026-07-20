@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import './forms.css';
+import '../../assets/css/forms.css';
+import Logo from '../../assets/logo.png';
+import Hero from '../../assets/images/hero-image.png';
+import GridBG from '../../assets/images/grid-bg.png';
 import api from '../../api/api.js';
 import { getOperatingSystem } from '../../utils/getDevice.util.js';
 import { useNavigate } from 'react-router';
-import {RiCloseLine} from '@remixicon/react';
+import { RiCloseLine, RiLockLine, RiMailLine } from '@remixicon/react';
 
 function Login() {
     const navigate = useNavigate();
@@ -69,7 +72,7 @@ function Login() {
 
             // Notify the user via your error creation state
             createError(errorMessage, errorCode, false);
-        }finally{
+        } finally {
             changeLoadingState();
         }
     }
@@ -78,33 +81,46 @@ function Login() {
         <>
             <div className="form-page-container">
                 <div className="left">
-                    <h1>EZITech</h1>
-                    <p>Keep Growing</p>
+                    <img src={Hero} alt="" />
                 </div>
                 <div className="right">
+                    <div className="logo-container">
+                        <img src={Logo} alt="" />
+                        <div className="logo-heading-tagline">
+                            <h1 className='logo-heading'>EZITech <br /> Institute</h1>
+                            <p>Keep Growing</p>
+                        </div>
+                    </div>
                     <form onSubmit={handleLogin} className="form-container">
-                        <h2>Welcome Back</h2>
+                        <div className="heading-container">
+                            <h2>Welcome Back</h2>
+                            <p>Log in to your account to get going.</p>
+                        </div>
                         <div className="form-body">
                             <div className={`error-container ${showPopup ? '' : 'hidden'}`}>
                                 <div className={`pop-up ${error.success ? 'success' : 'error'}`}>{error.errorMessage}</div>
                                 <button type='button' onClick={togglePopup}><RiCloseLine /></button>
                             </div>
                             <div className="field-container">
-                                <label htmlFor="email">Email: </label>
+                                <span className="icon-container"><RiMailLine size={20} /></span>
                                 <input type="email" name='email' id='email' className='email-inp' placeholder='Enter your email' value={formData.email} onChange={handleFormDataChange} />
                             </div>
                             <div className="field-container">
-                                <label htmlFor="password">Password: </label>
+                                <span className="icon-container">
+                                    <RiLockLine size={20} />
+                                </span>
                                 <input type="password" name='password' id='password' className='pass-inp' placeholder='Enter your password' value={formData.password} onChange={handleFormDataChange} />
                             </div>
                             <div className="cta-container">
-                                <span>Don't have an account? <a href="/register">Register Here</a></span>
+                                <span><a href="/register">Register Account</a></span>
+                                <span><a href="/reset-password">Reset Password</a></span>
                             </div>
-                            <div className="field-container">
+                            <div className="button-container">
                                 <button disabled={isLoading} >{isLoading ? 'Logging in...' : 'Log In'}</button>
                             </div>
                         </div>
                     </form>
+                    <img className='grid-bg' src={GridBG} alt="" />
                 </div>
             </div>
         </>

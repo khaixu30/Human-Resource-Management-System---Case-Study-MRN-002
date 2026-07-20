@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import './forms.css';
+import '../../assets/css/forms.css';
 import api from '../../api/api.js';
 import { getOperatingSystem } from '../../utils/getDevice.util.js';
 import { useNavigate } from 'react-router';
 import { RiCloseLine } from '@remixicon/react';
+import Hero from '../../assets/images/hero-image.png';
+import Logo from '../../assets/logo.png'
 
 function VerifyOTP() {
     const navigate = useNavigate();
@@ -61,12 +63,21 @@ function VerifyOTP() {
         <>
             <div className="form-page-container">
                 <div className="left">
-                    <h1>EZITech</h1>
-                    <p>Keep Growing</p>
+                    <img src={Hero} alt="" />
                 </div>
                 <div className="right">
+                    <div className="logo-container">
+                                            <img src={Logo} alt="" />
+                                            <div className="logo-heading-tagline">
+                                                <h1 className='logo-heading'>EZITech <br /> Institute</h1>
+                                                <p>Keep Growing</p>
+                                            </div>
+                                        </div>
                     <form onSubmit={handleVerify} className="form-container">
-                        <h2>Verify Your Email</h2>
+                        <div className="heading-container">
+                            <h2>Verify Your Email!</h2>
+                            <p>We have sent OTP on your given email, please verify before proceeding.</p>
+                        </div>
                         <div className="form-body">
                             <div className="field-container">
                                 <input type="text" className='otp-inp' id='otp' name='otp' value={formData.otp} onChange={handleFormDataChange} placeholder='Enter You One-Time Pin' />
@@ -74,8 +85,8 @@ function VerifyOTP() {
                             <div className="cta-container">
                                 <span>Didn't recieved an email? Try <a href="/login">Logging in again!</a></span>
                             </div>
-                            <div className="field-container">
-                                <button disabled={isLoading} >{isLoading ? 'Logging in...' : 'Log In'}</button>
+                            <div className="button-container">
+                                <button disabled={isLoading} >{isLoading ? 'Verifying in...' : 'Verify'}</button>
                             </div>
                         </div>
                     </form>
